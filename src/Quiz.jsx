@@ -1,15 +1,19 @@
 import React, { useEffect, useReducer } from "react";
 import "./App.css";
 import { QuizContext } from "./Context";
+import { Question } from './Question';
 
 const initialState = {
-  questions: []
+  questions: [],
+  counter: 0
 };
 
 function reducer(state, action) {
   switch (action.type) {
     case "loadQuestions":
       return { ...state, questions: action.payload };
+    case 'next':
+      return { ...state, counter: state.counter + 1}; //maximum a tömb végéig kell menjen
     default:
       throw new Error();
   }
@@ -28,17 +32,15 @@ function Quiz() {
           type: "loadQuestions",
           payload: api.results
         });
+        console.log(api.results);
+        
       });
   }, []);
 
   return (
     <QuizContext.Provider value={dispatch}>
       <div className="Quiz">
-        <ul>
-          {state.questions.map((question) => 
-            <li key={question.question}>{question.question}</li>
-          )}
-        </ul>
+        {state.questions && state.questions.length > 0 && <Question question={state.questions[state.counter]}/>}
       </div>
     </QuizContext.Provider>
   );
